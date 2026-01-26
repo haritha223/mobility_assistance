@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | Mobility Assistance</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    .dashboard {
+      background: #f8fcff;
+      text-align: center;
+      padding: 50px;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    h2 {
+      color: #2980b9;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .buttons a,
+    .buttons button {
+      background: #5aa9ff;
+      color: white;
+      padding: 12px 25px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.3s;
+      width: 220px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .buttons a:hover,
+    .buttons button:hover {
+      background: #007bff;
+    }
+
+    .logout {
+      background: #ff5252 !important;
+    }
+
+    /* 🚨 SOS Button Style */
+    .sos-btn {
+      background: #ff0000 !important;
+      animation: blink 1s infinite;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.7);
+    }
+
+    @keyframes blink {
+
+      0%,
+      50%,
+      100% {
+        opacity: 1;
+      }
+
+      25%,
+      75% {
+        opacity: 0.4;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="dashboard">
+    <h2>Welcome 👋</h2>
+    <p>Select an option:</p>
+    <div class="buttons">
+      <a href="{{ url_for('navigation') }}">🗺 Navigation</a>
+      <a href="{{ url_for('reviews') }}">💬 Reviews</a>
+      <button class="sos-btn" onclick="triggerSOS()">🚨 SOS Emergency</button>
+      <a href="{{ url_for('logout') }}" class="logout">Logout</a>
+    </div>
+  </div>
+
+  <script>
+    function triggerSOS() {
+      const btn = document.querySelector('.sos-btn');
+      const originalText = btn.innerText;
+      btn.innerText = "⏳ Sending Alert...";
+      btn.disabled = true;
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+
+            // Reverse Geocoding to get address
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+              .then(response => response.json())
+              .then(data => {
+                const address = data.display_name || "Unknown location";
+                const mapsLink = `https://www.google.com/maps?q=${lat},${lon}`;
+
+                const message = `🚨 SOS ALERT TRIGGERED!\n\n📍 Location: ${address}\n\n🔗 Coordinates: ${lat.toFixed(5)}, ${lon.toFixed(5)}\n\n🚑 Help is on the way!`;
+
+                alert(message);
+
+                // Optional: Open maps to show location to the user
+                if (confirm("Open location in Google Maps?")) {
+                  window.open(mapsLink, '_blank');
+                }
+              })
+              .catch(() => {
+                alert(`🚨 SOS ALERT!\n\n📍 Coordinates: ${lat.toFixed(5)}, ${lon.toFixed(5)}\n\n(Address lookup failed, but help is coming!)`);
+              })
+              .finally(() => {
+                btn.innerText = originalText;
+                btn.disabled = false;
+              });
+          },
+          (err) => {
+            alert("⚠️ Unable to access location. Please enable GPS for SOS.");
+            btn.innerText = originalText;
+            btn.disabled = false;
+          }
+        );
+      } else {
+        alert("❌ Geolocation not supported in your browser.");
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }
+    }
+  </script>
+</body>
+
+</html>

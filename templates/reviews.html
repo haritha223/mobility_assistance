@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reviews</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    body {
+      background: #f5f8ff;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      width: 90%;
+      max-width: 600px;
+      margin: 50px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      padding: 10px;
+      resize: none;
+      margin-bottom: 10px;
+    }
+    button {
+      background: #0078d7;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .review {
+      background: #eef5ff;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>💬 Post a Review</h2>
+    <form method="POST">
+      <input type="text" name="username" placeholder="Your name (optional)" style="width:100%;padding:10px;margin-bottom:10px;">
+      <textarea name="message" placeholder="Write your review..." required></textarea>
+      <button type="submit">Submit</button>
+    </form>
+
+    <h3>📝 Recent Reviews</h3>
+    {% for u, msg in reviews %}
+      <div class="review">
+        <strong>{{ u }}</strong><br>
+        {{ msg }}
+      </div>
+    {% endfor %}
+  </div>
+</body>
+</html>
