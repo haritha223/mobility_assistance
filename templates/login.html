@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
+<<<<<<< HEAD
 
+=======
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -38,7 +41,10 @@
         opacity: 0;
         transform: translateY(30px);
       }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
       to {
         opacity: 1;
         transform: translateY(0);
@@ -116,6 +122,7 @@
     }
 
     @keyframes fadeIn {
+<<<<<<< HEAD
       from {
         opacity: 0;
       }
@@ -123,6 +130,10 @@
       to {
         opacity: 1;
       }
+=======
+      from { opacity: 0; }
+      to { opacity: 1; }
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
     }
 
     .input-group {
@@ -194,6 +205,7 @@
     }
 
     @keyframes shake {
+<<<<<<< HEAD
 
       0%,
       100% {
@@ -207,6 +219,11 @@
       75% {
         transform: translateX(10px);
       }
+=======
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
     }
 
     .success {
@@ -244,6 +261,7 @@
       padding-left: 4px;
     }
 
+<<<<<<< HEAD
     /* Voice Input Styles */
     .voice-control-group {
       display: flex;
@@ -316,6 +334,8 @@
       }
     }
 
+=======
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
     @media (max-width: 480px) {
       .auth-container {
         padding: 30px 20px;
@@ -327,7 +347,10 @@
     }
   </style>
 </head>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
 <body>
   <div class="auth-container">
     <div class="logo">
@@ -348,6 +371,7 @@
     <div id="login-form" class="form-container active">
       <form onsubmit="handleLogin(event)">
         <div class="input-group">
+<<<<<<< HEAD
           <div class="voice-control-group">
             <label for="login-username">Username</label>
             <div class="voice-actions">
@@ -357,10 +381,14 @@
               </button>
             </div>
           </div>
+=======
+          <label for="login-username">Username</label>
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
           <input type="text" id="login-username" name="username" placeholder="Enter your username" required>
         </div>
 
         <div class="input-group">
+<<<<<<< HEAD
           <div class="voice-control-group">
             <label for="login-password">Password</label>
             <div class="voice-actions">
@@ -370,6 +398,9 @@
               </button>
             </div>
           </div>
+=======
+          <label for="login-password">Password</label>
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
           <input type="password" id="login-password" name="password" placeholder="Enter your password" required>
         </div>
 
@@ -377,8 +408,12 @@
       </form>
 
       <div class="help-link">
+<<<<<<< HEAD
         <a href="#" onclick="alert('Please contact your administrator for password reset.'); return false;">Forgot
           password?</a>
+=======
+        <a href="#" onclick="alert('Please contact your administrator for password reset.'); return false;">Forgot password?</a>
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
       </div>
     </div>
 
@@ -386,6 +421,7 @@
     <div id="register-form" class="form-container">
       <form onsubmit="handleRegister(event)">
         <div class="input-group">
+<<<<<<< HEAD
           <div class="voice-control-group">
             <label for="register-username">Username</label>
             <div class="voice-actions">
@@ -409,10 +445,19 @@
               </button>
             </div>
           </div>
+=======
+          <label for="register-username">Username</label>
+          <input type="text" id="register-username" name="username" placeholder="Choose a username" required minlength="3">
+        </div>
+
+        <div class="input-group">
+          <label for="register-email">Email</label>
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
           <input type="email" id="register-email" name="email" placeholder="your.email@example.com" required>
         </div>
 
         <div class="input-group">
+<<<<<<< HEAD
           <div class="voice-control-group">
             <label for="register-password">Password</label>
             <div class="voice-actions">
@@ -424,10 +469,15 @@
           </div>
           <input type="password" id="register-password" name="password" placeholder="Create a strong password" required
             minlength="6">
+=======
+          <label for="register-password">Password</label>
+          <input type="password" id="register-password" name="password" placeholder="Create a strong password" required minlength="6">
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
           <div class="password-requirements">Min. 6 characters</div>
         </div>
 
         <div class="input-group">
+<<<<<<< HEAD
           <div class="voice-control-group">
             <label for="register-confirm">Confirm Password</label>
             <div class="voice-actions">
@@ -439,6 +489,10 @@
           </div>
           <input type="password" id="register-confirm" name="confirm_password" placeholder="Re-enter your password"
             required>
+=======
+          <label for="register-confirm">Confirm Password</label>
+          <input type="password" id="register-confirm" name="confirm_password" placeholder="Re-enter your password" required>
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
         </div>
 
         <button type="submit" class="submit-btn">Create Account</button>
@@ -456,7 +510,11 @@
       // Update form containers
       document.getElementById('login-form').classList.remove('active');
       document.getElementById('register-form').classList.remove('active');
+<<<<<<< HEAD
 
+=======
+      
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
       if (tab === 'login') {
         document.getElementById('login-form').classList.add('active');
       } else {
@@ -495,6 +553,7 @@
         method: 'POST',
         body: formData
       })
+<<<<<<< HEAD
         .then(response => response.json())
         .then(data => {
           if (data.success) {
@@ -507,13 +566,31 @@
         .catch(error => {
           showError('An error occurred. Please try again.');
         });
+=======
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showSuccess('Login successful! Redirecting...');
+          setTimeout(() => window.location.href = data.redirect, 1000);
+        } else {
+          showError(data.error || 'Login failed. Please try again.');
+        }
+      })
+      .catch(error => {
+        showError('An error occurred. Please try again.');
+      });
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
     }
 
     function handleRegister(event) {
       event.preventDefault();
       const form = event.target;
       const formData = new FormData(form);
+<<<<<<< HEAD
 
+=======
+      
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
       const password = formData.get('password');
       const confirmPassword = formData.get('confirm_password');
 
@@ -526,6 +603,7 @@
         method: 'POST',
         body: formData
       })
+<<<<<<< HEAD
         .then(response => response.json())
         .then(data => {
           if (data.success) {
@@ -549,4 +627,27 @@
   <script src="{{ url_for('static', filename='voice-processor.js') }}"></script>
 </body>
 
+=======
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          showSuccess('Registration successful! Please login.');
+          form.reset();
+          setTimeout(() => {
+            document.getElementById('login-form').classList.add('active');
+            document.getElementById('register-form').classList.remove('active');
+            document.querySelectorAll('.tab')[0].classList.add('active');
+            document.querySelectorAll('.tab')[1].classList.remove('active');
+          }, 1500);
+        } else {
+          showError(data.error || 'Registration failed. Please try again.');
+        }
+      })
+      .catch(error => {
+        showError('An error occurred. Please try again.');
+      });
+    }
+  </script>
+</body>
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
 </html>

@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request, render_template, redirect, url_for
+<<<<<<< HEAD
 import requests, sqlite3, webbrowser, os, json
 from googletrans import Translator
 
@@ -7,6 +8,12 @@ DB_PATH = "reviews.db"
 translator = Translator()
 
 # ---------- INITIAL DATABASE ----------
+=======
+import requests, sqlite3, webbrowser, os
+
+app = Flask(__name__)
+DB_PATH = "reviews.db"
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
 
 # ---------- INITIAL DATABASE ----------
 def init_db():
@@ -181,6 +188,7 @@ def overpass_proxy():
         return jsonify({"error": "Invalid bbox format"}), 400
 
     # Overpass QL Query
+<<<<<<< HEAD
     # Fetch all public places: amenities, shops, tourism, AND wheelchair-tagged places
     query = f"""
     [out:json][timeout:30];
@@ -194,6 +202,17 @@ def overpass_proxy():
       way["wheelchair"]({min_lat},{min_lon},{max_lat},{max_lon});
     );
     out center tags;
+=======
+    # We ask for nodes, ways, and relations with the 'wheelchair' tag in the bbox
+    query = f"""
+    [out:json][timeout:25];
+    (
+      node["wheelchair"]({min_lat},{min_lon},{max_lat},{max_lon});
+      way["wheelchair"]({min_lat},{min_lon},{max_lat},{max_lon});
+      relation["wheelchair"]({min_lat},{min_lon},{max_lat},{max_lon});
+    );
+    out center;
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
     """
 
     overpass_url = "https://overpass-api.de/api/interpreter"
@@ -225,6 +244,7 @@ def admin_data():
     conn.close()
     return render_template('admin_data.html', users=users, reviews=reviews)
 
+<<<<<<< HEAD
 # ---------- SPEECH TRANSLATION API ----------
 @app.route('/api/translate', methods=['POST'])
 def translate_text():
@@ -248,12 +268,19 @@ def translate_text():
         print(f"Translation Error: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
+=======
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
 # ---------- MAIN ----------
 if __name__ == '__main__':
     print("🚀 Server running at http://127.0.0.1:5000")
     print("📂 View Database Data at http://127.0.0.1:5000/admin/data")
+<<<<<<< HEAD
     # Only open browser in the FIRST process, not in the Flask reloader subprocess
     import os
     if not os.environ.get("WERKZEUG_RUN_MAIN"):
         webbrowser.open("http://127.0.0.1:5000")
+=======
+    print(app.url_map) # <--- PRINT ROUTES
+    webbrowser.open("http://127.0.0.1:5000")
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
     app.run(debug=True)

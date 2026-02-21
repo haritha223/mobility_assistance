@@ -72,6 +72,7 @@
       transform: scale(1.05);
     }
 
+<<<<<<< HEAD
     .search-mic-btn {
       background: white;
       color: #718096;
@@ -125,6 +126,8 @@
       }
     }
 
+=======
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
     #map {
       height: calc(100vh - 70px);
       width: 100%;
@@ -224,6 +227,7 @@
       border-radius: 10px !important;
       margin-bottom: 5px;
     }
+<<<<<<< HEAD
 
     /* Stats Panel */
     #stats-panel {
@@ -283,6 +287,8 @@
       min-width: 28px;
       text-align: right;
     }
+=======
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
   </style>
 </head>
 
@@ -299,6 +305,7 @@
 
   <div class="search-container">
     <input type="text" id="search-input" placeholder="Search a city or street...">
+<<<<<<< HEAD
     <button class="search-mic-btn" id="voice-btn-search" data-target="search-input"
       title="Click to speak location">🎤</button>
     <button class="search-btn" onclick="searchLocation()" title="Search">🔍</button>
@@ -330,6 +337,13 @@
       id="stats-radius"></div>
   </div>
 
+=======
+    <button class="search-btn" onclick="searchLocation()" title="Search">🔍</button>
+  </div>
+
+  <div id="map"></div>
+
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
   <div class="legend">
     <div style="font-weight: 700; font-size: 16px; margin-bottom: 15px; color: #1a73e8;">
       Access Level
@@ -398,6 +412,7 @@
       }
     }
 
+<<<<<<< HEAD
     // Track already-loaded OSM IDs to avoid duplicate markers
     const loadedIds = new Set();
     // Global counts
@@ -543,6 +558,112 @@
       );
     }
 
+=======
+    function loadAccessibilityData(lat, lng) {
+      // Scan radius (approx 3km)
+      const range = 0.03;
+      const bbox = `${lng - range},${lat - range},${lng + range},${lat + range}`;
+
+      fetch(`/api/wheelmap?bbox=${bbox}`)
+        .then(res => res.json())
+        .then(data => {
+          accessibilityLayer.clearLayers();
+
+          if (!data.elements || data.elements.length === 0) {
+            document.getElementById("banner").innerText = "⚠️ No data found in this area";
+            document.getElementById("banner").style.display = "block";
+            setTimeout(() => document.getElementById("banner").style.display = "none", 3000);
+            return;
+          }
+
+          let countFull = 0;
+          let countLimited = 0;
+          let countNo = 0;
+
+          data.elements.forEach(element => {
+            // Get coordinates (Node vs Way/Relation)
+            let eLat = element.lat;
+            let eLon = element.lon;
+            if (!eLat && element.center) {
+              eLat = element.center.lat;
+              eLon = element.center.lon;
+            }
+            if (!eLat || !eLon) return;
+
+            // Extract Data
+            const tags = element.tags || {};
+            const wheelchair = tags.wheelchair || "unknown";
+            const name = tags.name || tags["addr:housename"] || "Unknown Place";
+            const amenity = tags.amenity || tags.shop || "Location";
+
+            // Count Categories
+            let color = "#70757a";
+            if (wheelchair === "yes") {
+              color = "#34a853";
+              countFull++;
+            } else if (wheelchair === "limited") {
+              color = "#fbbc05";
+              countLimited++;
+            } else if (wheelchair === "no") {
+              color = "#ea4335";
+              countNo++;
+            }
+
+            // Create Marker
+            const marker = L.circleMarker([eLat, eLon], {
+              radius: 9, // Slightly larger for visibility
+              fillColor: color,
+              color: "white",
+              weight: 2,
+              opacity: 1,
+              fillOpacity: 0.9
+            });
+
+            marker.bindPopup(`
+              <div style="font-family: 'Segoe UI', sans-serif; min-width: 200px; padding: 5px;">
+                <h4 style="margin: 0 0 5px 0; color: #1a73e8; font-size: 15px;">${name}</h4>
+                <div style="font-size: 12px; color: #666; margin-bottom: 8px;">${amenity}</div>
+                
+                <div style="background: #f8f9fa; padding: 6px; border-radius: 6px; border-left: 3px solid ${color};">
+                  <div style="font-size: 12px; color: #444;">
+                    <b>Accessibility:</b> 
+                    <span style="color:${color}; font-weight:bold; text-transform: capitalize;">${wheelchair}</span>
+                  </div>
+                </div>
+                
+                <div style="font-size: 10px; color: #999; margin-top: 5px; text-align: right;">
+                   OSM ID: ${element.id}
+                </div>
+              </div>
+            `);
+
+            marker.addTo(accessibilityLayer);
+          });
+
+          // Show Summary Banner
+          const summary = `📍 Nearby: ${countFull} Fully 🟢 | ${countLimited} Limited 🟡 | ${countNo} No Access 🔴`;
+          const banner = document.getElementById("banner");
+          banner.innerText = summary;
+          banner.style.display = "block";
+
+          // Hide after 6 seconds
+          setTimeout(() => {
+            banner.style.opacity = '0';
+            banner.style.transition = 'opacity 1s';
+            setTimeout(() => {
+              banner.style.display = "none";
+              banner.style.opacity = '1';
+            }, 1000);
+          }, 6000);
+        })
+        .catch(err => {
+          console.error("Data fetch error:", err);
+          document.getElementById("banner").innerText = "⚠️ Error fetching realtime data";
+          document.getElementById("banner").style.display = "block";
+        });
+    }
+
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
     function searchLocation() {
       const query = document.getElementById('search-input').value;
       if (!query) return;
@@ -582,7 +703,10 @@
       if (e.key === 'Enter') searchLocation();
     });
   </script>
+<<<<<<< HEAD
   <script src="{{ url_for('static', filename='voice-processor.js') }}"></script>
+=======
+>>>>>>> 147d511d32d1022f1f1f826b0eed62729001218f
 </body>
 
 </html>
