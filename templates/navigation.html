@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accessible Navigation | Mobility Assistance</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f2f5;
+      overflow: hidden;
+    }
+
+    header {
+      background: #1a73e8;
+      color: white;
+      padding: 0 20px;
+      height: 70px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      position: relative;
+      z-index: 1000;
+    }
+
+    .search-container {
+      position: absolute;
+      top: 85px;
+      left: 20px;
+      z-index: 1000;
+      width: 320px;
+      display: flex;
+      gap: 5px;
+    }
+
+    #search-input {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 30px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      font-size: 14px;
+      outline: none;
+    }
+
+    .search-btn {
+      background: white;
+      color: #1a73e8;
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      font-size: 20px;
+      transition: 0.2s;
+    }
+
+    .search-btn:hover {
+      background: #f1f3f4;
+      transform: scale(1.05);
+    }
+
+    .search-mic-btn {
+      background: white;
+      color: #718096;
+      border: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      font-size: 20px;
+      transition: 0.2s;
+    }
+
+    .search-mic-btn:hover {
+      color: #1a73e8;
+      transform: scale(1.05);
+    }
+
+    .search-mic-btn.listening {
+      background: #fed7d7;
+      color: #e53e3e;
+      animation: searchPulse 1.5s infinite;
+    }
+
+    .search-lang {
+      padding: 0 5px;
+      border: none;
+      border-radius: 20px;
+      font-size: 13px;
+      color: #4a5568;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      outline: none;
+      cursor: pointer;
+    }
+
+    @keyframes searchPulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.4);
+      }
+
+      70% {
+        box-shadow: 0 0 0 10px rgba(229, 62, 62, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(229, 62, 62, 0);
+      }
+    }
+
+    #map {
+      height: calc(100vh - 70px);
+      width: 100%;
+    }
+
+    .banner {
+      display: none;
+      background: #fbbc05;
+      color: #000;
+      padding: 10px 20px;
+      text-align: center;
+      border-radius: 30px;
+      position: absolute;
+      top: 85px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      border: 2px solid white;
+    }
+
+    .legend {
+      background: white;
+      padding: 15px 20px;
+      border-radius: 15px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+      position: absolute;
+      bottom: 30px;
+      right: 20px;
+      z-index: 1000;
+      font-size: 13px;
+      min-width: 160px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .legend-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: inline-block;
+      border: 2px solid white;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .back-btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 2px solid white;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: 0.3s;
+      font-size: 14px;
+    }
+
+    .back-btn:hover {
+      background: white;
+      color: #1a73e8;
+    }
+
+    .status-yes {
+      background: #34a853;
+    }
+
+    .status-limited {
+      background: #fbbc05;
+    }
+
+    .status-no {
+      background: #ea4335;
+    }
+
+    .status-unknown {
+      background: #70757a;
+    }
+
+    /* Custom styles for Leaflet elements */
+    .leaflet-bar {
+      border: none !important;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .leaflet-bar a {
+      border-radius: 10px !important;
+      margin-bottom: 5px;
+    }
+
+    /* Stats Panel */
+    #stats-panel {
+      position: absolute;
+      top: 85px;
+      right: 20px;
+      z-index: 1000;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.18);
+      padding: 14px 18px;
+      min-width: 200px;
+      font-family: 'Segoe UI', sans-serif;
+      display: none;
+    }
+
+    #stats-panel .sp-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1a73e8;
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .sp-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 7px;
+      font-size: 13px;
+      color: #444;
+    }
+
+    .sp-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .sp-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sp-dot {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      border: 2px solid white;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+      flex-shrink: 0;
+    }
+
+    .sp-count {
+      font-weight: 700;
+      font-size: 14px;
+      min-width: 28px;
+      text-align: right;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="banner" id="banner">📍 Demo Mode: Viewing Berlin Mobility Data</div>
+
+  <header>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <span style="font-size: 24px;">♿</span>
+      <h2 style="margin: 0; font-size: 1.4rem;">Accessible Mobility Map</h2>
+    </div>
+    <a href="{{ url_for('dashboard') }}" class="back-btn">⬅ Back Home</a>
+  </header>
+
+  <div class="search-container">
+    <input type="text" id="search-input" placeholder="Search a city or street...">
+    <button class="search-mic-btn" id="voice-btn-search" data-target="search-input"
+      title="Click to speak location">🎤</button>
+    <button class="search-btn" onclick="searchLocation()" title="Search">🔍</button>
+  </div>
+
+
+  <div id="map"></div>
+
+  <!-- Live Stats Panel -->
+  <div id="stats-panel">
+    <div class="sp-title">📊 Places Found</div>
+    <div class="sp-row">
+      <span class="sp-label"><span class="sp-dot" style="background:#34a853"></span> Fully Accessible</span>
+      <span class="sp-count" id="cnt-yes" style="color:#34a853">0</span>
+    </div>
+    <div class="sp-row">
+      <span class="sp-label"><span class="sp-dot" style="background:#fbbc05"></span> Limited Access</span>
+      <span class="sp-count" id="cnt-limited" style="color:#fbbc05">0</span>
+    </div>
+    <div class="sp-row">
+      <span class="sp-label"><span class="sp-dot" style="background:#ea4335"></span> No Access</span>
+      <span class="sp-count" id="cnt-no" style="color:#ea4335">0</span>
+    </div>
+    <div class="sp-row">
+      <span class="sp-label"><span class="sp-dot" style="background:#70757a"></span> Unknown</span>
+      <span class="sp-count" id="cnt-unknown" style="color:#70757a">0</span>
+    </div>
+    <div style="border-top:1px solid #eee;margin-top:8px;padding-top:8px;font-size:12px;color:#999;text-align:center"
+      id="stats-radius"></div>
+  </div>
+
+  <div class="legend">
+    <div style="font-weight: 700; font-size: 16px; margin-bottom: 15px; color: #1a73e8;">
+      Access Level
+    </div>
+    <div class="legend-item"><span class="dot status-yes"></span> Fully Accessible</div>
+    <div class="legend-item"><span class="dot status-limited"></span> Limited Access</div>
+    <div class="legend-item"><span class="dot status-no"></span> Not Accessible</div>
+    <div class="legend-item"><span class="dot status-unknown"></span> Unknown</div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    let map;
+    let accessibilityLayer = L.layerGroup();
+    let currentMarker;
+
+    // Initialize Map with Google Maps Tiles (DIRECT ACCESS - NO KEY NEEDED)
+    function initMap() {
+      const coimbatore = [11.0168, 76.9558];
+
+      map = L.map('map', {
+        zoomControl: false,
+        attributionControl: false
+      }).setView(coimbatore, 15);
+
+      L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+      // --- THE "DIRECT" GOOGLE MAPS SOLUTION ---
+      const googleRoadmap = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+      });
+
+      googleRoadmap.addTo(map);
+      accessibilityLayer.addTo(map);
+
+      // Add Attribution
+      L.control.attribution({ position: 'bottomleft' })
+        .addAttribution('Map data &copy; Google')
+        .addTo(map);
+
+      // Try to get User Location
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          const { latitude, longitude } = pos.coords;
+          map.setView([latitude, longitude], 15);
+
+          if (currentMarker) map.removeLayer(currentMarker);
+
+          currentMarker = L.marker([latitude, longitude], {
+            icon: L.divIcon({
+              className: 'user-marker',
+              html: '<div style="background:#4285F4;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 0 10px rgba(0,0,0,0.5)"></div>',
+              iconSize: [24, 24]
+            })
+          }).addTo(map).bindPopup("<b>You are here</b>");
+
+          loadAccessibilityData(latitude, longitude);
+        }, () => {
+          loadAccessibilityData(coimbatore[0], coimbatore[1]);
+        });
+      } else {
+        loadAccessibilityData(coimbatore[0], coimbatore[1]);
+      }
+    }
+
+    // Track already-loaded OSM IDs to avoid duplicate markers
+    const loadedIds = new Set();
+    // Global counts
+    let cntYes = 0, cntLimited = 0, cntNo = 0, cntUnknown = 0;
+
+    function degFromKm(km) {
+      return km / 111; // 1 degree ≈ 111 km
+    }
+
+    function updateStatsPanel(km) {
+      document.getElementById('cnt-yes').textContent = cntYes;
+      document.getElementById('cnt-limited').textContent = cntLimited;
+      document.getElementById('cnt-no').textContent = cntNo;
+      document.getElementById('cnt-unknown').textContent = cntUnknown;
+      const panel = document.getElementById('stats-panel');
+      panel.style.display = 'block';
+      if (km) document.getElementById('stats-radius').textContent = `Within ${km} km radius`;
+    }
+
+    function addMarkersFromData(data, banner) {
+      if (!data.elements) return 0;
+      let added = 0;
+
+      data.elements.forEach(element => {
+        if (loadedIds.has(element.id)) return; // skip duplicates
+        loadedIds.add(element.id);
+
+        let eLat = element.lat;
+        let eLon = element.lon;
+        if (!eLat && element.center) {
+          eLat = element.center.lat;
+          eLon = element.center.lon;
+        }
+        if (!eLat || !eLon) return;
+
+        const tags = element.tags || {};
+        const wheelchair = tags.wheelchair || "unknown";
+        const name = tags.name || tags["name:en"] || tags["name:ta"] || "Unnamed Place";
+        const placeType = tags.amenity || tags.shop || tags.tourism || tags.leisure || "place";
+
+        let color = "#70757a";
+        if (wheelchair === "yes") { color = "#34a853"; cntYes++; }
+        else if (wheelchair === "limited") { color = "#fbbc05"; cntLimited++; }
+        else if (wheelchair === "no") { color = "#ea4335"; cntNo++; }
+        else { cntUnknown++; }
+
+        const marker = L.circleMarker([eLat, eLon], {
+          radius: 8,
+          fillColor: color,
+          color: "white",
+          weight: 2,
+          opacity: 1,
+          fillOpacity: 0.85
+        });
+
+        marker.bindPopup(`
+          <div style="font-family:'Segoe UI',sans-serif;min-width:210px;padding:5px">
+            <h4 style="margin:0 0 4px 0;color:#1a73e8;font-size:15px">${name}</h4>
+            <div style="font-size:12px;color:#888;margin-bottom:8px;text-transform:capitalize">📍 ${placeType.replace(/_/g, ' ')}</div>
+            <div style="background:#f8f9fa;padding:8px;border-radius:8px;border-left:4px solid ${color}">
+              <div style="font-size:12px;color:#444">♿ <b>Wheelchair:</b>
+                <span style="color:${color};font-weight:bold;text-transform:capitalize"> ${wheelchair}</span>
+              </div>
+            </div>
+            <div style="font-size:10px;color:#bbb;margin-top:6px;text-align:right">OSM ID: ${element.id}</div>
+          </div>
+        `);
+
+        marker.addTo(accessibilityLayer);
+        added++;
+      });
+      return added;
+    }
+
+    function fetchRound(lat, lng, km, label, banner, onFound, onEmpty) {
+      const r = degFromKm(km);
+      const bbox = `${lng - r},${lat - r},${lng + r},${lat + r}`;
+
+      banner.style.opacity = "1";
+      banner.style.transition = "none";
+      banner.innerText = `⏳ Checking ${km} km radius...`;
+      banner.style.display = "block";
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 90000);
+
+      fetch(`/api/wheelmap?bbox=${bbox}`, { signal: controller.signal })
+        .then(res => { clearTimeout(timeoutId); return res.json(); })
+        .then(data => {
+          const newCount = addMarkersFromData(data, banner);
+          updateStatsPanel(km);
+          if (newCount > 0) {
+            // ✅ Data found — stop here
+            showSummaryBanner(banner, km, newCount);
+            if (onFound) onFound();
+          } else {
+            // ❌ No data — silently try next radius (no message shown)
+            banner.style.display = 'none';
+            setTimeout(() => { if (onEmpty) onEmpty(); }, 500);
+          }
+        })
+        .catch(err => {
+          clearTimeout(timeoutId);
+          console.warn(`${label} fetch error:`, err);
+          banner.innerText = err.name === 'AbortError'
+            ? `⏱️ ${km} km timed out — expanding...`
+            : `⚠️ ${km} km error — expanding...`;
+          setTimeout(() => { if (onEmpty) onEmpty(); }, 2000);
+        });
+    }
+
+    function showSummaryBanner(banner, km, count) {
+      banner.innerText = `✅ Found ${count} places within ${km} km`;
+      setTimeout(() => {
+        banner.style.opacity = "0";
+        banner.style.transition = "opacity 1.5s";
+        setTimeout(() => { banner.style.display = "none"; banner.style.opacity = "1"; }, 1500);
+      }, 5000);
+    }
+
+    function loadAccessibilityData(lat, lng) {
+      accessibilityLayer.clearLayers();
+      loadedIds.clear();
+      cntYes = 0; cntLimited = 0; cntNo = 0; cntUnknown = 0;
+      document.getElementById('stats-panel').style.display = 'none';
+
+      const banner = document.getElementById("banner");
+
+      // Try 2km first → if no data, try 5km → if no data, try 7km
+      fetchRound(lat, lng, 2, "2km", banner,
+        () => { /* found at 2km — done! */ },
+        () => fetchRound(lat, lng, 5, "5km", banner,
+          () => { /* found at 5km — done! */ },
+          () => fetchRound(lat, lng, 7, "7km", banner,
+            () => { /* found at 7km — done! */ },
+            () => {
+              // Nothing found even at 7km
+              banner.innerText = "⚠️ No OSM places found within 7 km. Try searching a city name above.";
+              setTimeout(() => banner.style.display = "none", 6000);
+            }
+          )
+        )
+      );
+    }
+
+    function searchLocation() {
+      const query = document.getElementById('search-input').value;
+      if (!query) return;
+
+      const btn = document.querySelector('.search-btn');
+      btn.innerHTML = '⌛';
+
+      fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${query}`)
+        .then(res => res.json())
+        .then(results => {
+          btn.innerHTML = '🔍';
+          if (results.length > 0) {
+            const { lat, lon, display_name } = results[0];
+            const target = [parseFloat(lat), parseFloat(lon)];
+            map.setView(target, 16);
+            loadAccessibilityData(target[0], target[1]);
+
+            L.popup()
+              .setLatLng(target)
+              .setContent(`<div style="font-size:12px;padding:5px"><b>Moved to:</b><br>${display_name}</div>`)
+              .openOn(map);
+          } else {
+            alert("Location not found. Try a different name.");
+          }
+        })
+        .catch(() => {
+          btn.innerHTML = '🔍';
+          alert("Search error. Please try again.");
+        });
+    }
+
+    // Auto-init
+    window.addEventListener('load', initMap);
+
+    // Enter key support
+    document.getElementById('search-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') searchLocation();
+    });
+  </script>
+  <script src="{{ url_for('static', filename='voice-processor.js') }}"></script>
+</body>
+
+</html>

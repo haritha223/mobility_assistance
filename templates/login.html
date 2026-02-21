@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Mobility Assistance</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .auth-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      width: 100%;
+      max-width: 420px;
+      animation: slideUp 0.5s ease;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo-icon {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin-bottom: 15px;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    h2 {
+      text-align: center;
+      color: #2d3748;
+      font-size: 28px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #718096;
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+
+    .tabs {
+      display: flex;
+      margin-bottom: 30px;
+      background: #f7fafc;
+      border-radius: 12px;
+      padding: 4px;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      color: #718096;
+      border: none;
+      background: transparent;
+      font-size: 15px;
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .form-container {
+      display: none;
+    }
+
+    .form-container.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #4a5568;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      background: white;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .input-group input::placeholder {
+      color: #a0aec0;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    }
+
+    .submit-btn:active {
+      transform: translateY(0);
+    }
+
+    .error {
+      background: #fed7d7;
+      color: #c53030;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      border-left: 4px solid #c53030;
+      animation: shake 0.5s ease;
+    }
+
+    @keyframes shake {
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(-10px);
+      }
+
+      75% {
+        transform: translateX(10px);
+      }
+    }
+
+    .success {
+      background: #c6f6d5;
+      color: #2f855a;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      border-left: 4px solid #2f855a;
+    }
+
+    .help-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .help-link a {
+      color: #667eea;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .help-link a:hover {
+      color: #764ba2;
+      text-decoration: underline;
+    }
+
+    .password-requirements {
+      font-size: 12px;
+      color: #718096;
+      margin-top: 8px;
+      padding-left: 4px;
+    }
+
+    /* Voice Input Styles */
+    .voice-control-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .voice-control-group label {
+      margin-bottom: 0;
+      /* Override default label margin */
+    }
+
+    .voice-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .lang-select {
+      padding: 4px 8px;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #4a5568;
+      background: white;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .mic-btn {
+      background: #f7fafc;
+      border: 1px solid #e2e8f0;
+      color: #718096;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+
+    .mic-btn:hover {
+      background: #edf2f7;
+      color: #667eea;
+      transform: scale(1.05);
+    }
+
+    .mic-btn.listening {
+      background: #fed7d7;
+      color: #e53e3e;
+      border-color: #feb2b2;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.4);
+      }
+
+      70% {
+        box-shadow: 0 0 0 10px rgba(229, 62, 62, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(229, 62, 62, 0);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .auth-container {
+        padding: 30px 20px;
+      }
+
+      h2 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="auth-container">
+    <div class="logo">
+      <div class="logo-icon">♿</div>
+      <h2>Mobility Assistance</h2>
+      <p class="subtitle">Welcome back! Please login to continue</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="showTab('login')">Login</button>
+      <button class="tab" onclick="showTab('register')">Register</button>
+    </div>
+
+    <div id="error-message" style="display: none;" class="error"></div>
+    <div id="success-message" style="display: none;" class="success"></div>
+
+    <!-- Login Form -->
+    <div id="login-form" class="form-container active">
+      <form onsubmit="handleLogin(event)">
+        <div class="input-group">
+          <div class="voice-control-group">
+            <label for="login-username">Username</label>
+            <div class="voice-actions">
+              <button type="button" class="mic-btn" id="voice-btn-login" data-target="login-username"
+                title="Click to speak username">
+                🎤
+              </button>
+            </div>
+          </div>
+          <input type="text" id="login-username" name="username" placeholder="Enter your username" required>
+        </div>
+
+        <div class="input-group">
+          <div class="voice-control-group">
+            <label for="login-password">Password</label>
+            <div class="voice-actions">
+              <button type="button" class="mic-btn" id="voice-btn-login-pass" data-target="login-password"
+                title="Click to speak password">
+                🎤
+              </button>
+            </div>
+          </div>
+          <input type="password" id="login-password" name="password" placeholder="Enter your password" required>
+        </div>
+
+        <button type="submit" class="submit-btn">Login</button>
+      </form>
+
+      <div class="help-link">
+        <a href="#" onclick="alert('Please contact your administrator for password reset.'); return false;">Forgot
+          password?</a>
+      </div>
+    </div>
+
+    <!-- Register Form -->
+    <div id="register-form" class="form-container">
+      <form onsubmit="handleRegister(event)">
+        <div class="input-group">
+          <div class="voice-control-group">
+            <label for="register-username">Username</label>
+            <div class="voice-actions">
+              <button type="button" class="mic-btn" id="voice-btn-register" data-target="register-username"
+                title="Click to speak username">
+                🎤
+              </button>
+            </div>
+          </div>
+          <input type="text" id="register-username" name="username" placeholder="Choose a username" required
+            minlength="3">
+        </div>
+
+        <div class="input-group">
+          <div class="voice-control-group">
+            <label for="register-email">Email</label>
+            <div class="voice-actions">
+              <button type="button" class="mic-btn" id="voice-btn-reg-email" data-target="register-email"
+                title="Click to speak email">
+                🎤
+              </button>
+            </div>
+          </div>
+          <input type="email" id="register-email" name="email" placeholder="your.email@example.com" required>
+        </div>
+
+        <div class="input-group">
+          <div class="voice-control-group">
+            <label for="register-password">Password</label>
+            <div class="voice-actions">
+              <button type="button" class="mic-btn" id="voice-btn-reg-pass" data-target="register-password"
+                title="Click to speak password">
+                🎤
+              </button>
+            </div>
+          </div>
+          <input type="password" id="register-password" name="password" placeholder="Create a strong password" required
+            minlength="6">
+          <div class="password-requirements">Min. 6 characters</div>
+        </div>
+
+        <div class="input-group">
+          <div class="voice-control-group">
+            <label for="register-confirm">Confirm Password</label>
+            <div class="voice-actions">
+              <button type="button" class="mic-btn" id="voice-btn-reg-confirm" data-target="register-confirm"
+                title="Click to speak password confirmation">
+                🎤
+              </button>
+            </div>
+          </div>
+          <input type="password" id="register-confirm" name="confirm_password" placeholder="Re-enter your password"
+            required>
+        </div>
+
+        <button type="submit" class="submit-btn">Create Account</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function showTab(tab) {
+      // Update tab buttons
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+
+      // Update form containers
+      document.getElementById('login-form').classList.remove('active');
+      document.getElementById('register-form').classList.remove('active');
+
+      if (tab === 'login') {
+        document.getElementById('login-form').classList.add('active');
+      } else {
+        document.getElementById('register-form').classList.add('active');
+      }
+
+      // Clear messages
+      hideMessages();
+    }
+
+    function showError(message) {
+      const errorDiv = document.getElementById('error-message');
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+      setTimeout(() => errorDiv.style.display = 'none', 5000);
+    }
+
+    function showSuccess(message) {
+      const successDiv = document.getElementById('success-message');
+      successDiv.textContent = message;
+      successDiv.style.display = 'block';
+      setTimeout(() => successDiv.style.display = 'none', 5000);
+    }
+
+    function hideMessages() {
+      document.getElementById('error-message').style.display = 'none';
+      document.getElementById('success-message').style.display = 'none';
+    }
+
+    function handleLogin(event) {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+
+      fetch('/', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            showSuccess('Login successful! Redirecting...');
+            setTimeout(() => window.location.href = data.redirect, 1000);
+          } else {
+            showError(data.error || 'Login failed. Please try again.');
+          }
+        })
+        .catch(error => {
+          showError('An error occurred. Please try again.');
+        });
+    }
+
+    function handleRegister(event) {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+
+      const password = formData.get('password');
+      const confirmPassword = formData.get('confirm_password');
+
+      if (password !== confirmPassword) {
+        showError('Passwords do not match!');
+        return;
+      }
+
+      fetch('/register', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            showSuccess('Registration successful! Please login.');
+            form.reset();
+            setTimeout(() => {
+              document.getElementById('login-form').classList.add('active');
+              document.getElementById('register-form').classList.remove('active');
+              document.querySelectorAll('.tab')[0].classList.add('active');
+              document.querySelectorAll('.tab')[1].classList.remove('active');
+            }, 1500);
+          } else {
+            showError(data.error || 'Registration failed. Please try again.');
+          }
+        })
+        .catch(error => {
+          showError('An error occurred. Please try again.');
+        });
+    }
+  </script>
+  <script src="{{ url_for('static', filename='voice-processor.js') }}"></script>
+</body>
+
+</html>
